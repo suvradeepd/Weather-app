@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assam Heritage Gallery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .gallery-item {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .gallery-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .modal {
+            backdrop-filter: blur(10px);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .audio-player {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .video-thumbnail {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-emerald-50 to-teal-100 min-h-screen">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-emerald-800 to-teal-700 text-white py-8 shadow-lg">
+        <div class="container mx-auto px-6">
+            <h1 class="text-4xl font-bold text-center mb-2">🏛️ Assam Heritage Gallery</h1>
+            <p class="text-center text-emerald-100 text-lg">Discover the Rich Cultural Legacy of Assam</p>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="bg-white shadow-md sticky top-0 z-40">
+        <div class="container mx-auto px-6">
+            <div class="flex space-x-8 overflow-x-auto">
+                <button onclick="showTab('gallery')" class="tab-btn py-4 px-6 font-semibold text-emerald-700 border-b-2 border-emerald-500 whitespace-nowrap">
+                    📸 Photo Gallery
+                </button>
+                <button onclick="showTab('voice')" class="tab-btn py-4 px-6 font-semibold text-gray-600 hover:text-emerald-700 whitespace-nowrap">
+                    🎵 Voice Heritage
+                </button>
+                <button onclick="showTab('video')" class="tab-btn py-4 px-6 font-semibold text-gray-600 hover:text-emerald-700 whitespace-nowrap">
+                    🎬 Video Stories
+                </button>
+                <button onclick="showTab('comments')" class="tab-btn py-4 px-6 font-semibold text-gray-600 hover:text-emerald-700 whitespace-nowrap">
+                    💬 Visitor Comments
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-6 py-8">
+        <!-- Photo Gallery Tab -->
+        <div id="gallery" class="tab-content active">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-emerald-800 mb-4">Heritage Photo Gallery</h2>
+                <p class="text-gray-600 mb-6">Explore the architectural marvels and cultural treasures of Assam</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Gallery Items with Actual Images -->
+                <div class="gallery-item bg-white rounded-lg shadow-md overflow-hidden cursor-pointer" onclick="openModal('Kamakhya Temple', 'The sacred Kamakhya Temple, one of the most revered Shakti Peethas in India, showcasing ancient Assamese architecture.', 'https:img/kamkhaya-temple-tour.png')">
+                    <img src="img/kamkhaya-temple-tour.png" alt="Kamakhya Temple" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg text-gray-800">🏛️ Kamakhya Temple</h3>
+                        <p class="text-gray-600 text-sm">Ancient Shakti Peetha</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item bg-white rounded-lg shadow-md overflow-hidden cursor-pointer" onclick="openModal('Majuli Island', 'The worlds largest river island, home to Vaishnavite monasteries and traditional Assamese culture.', 'https:img/Majuli_Island.jpg')">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Majuli_Island.jpg/800px-Majuli_Island.jpg" alt="Majuli Island" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg text-gray-800">🏝️ Majuli Island</h3>
+                        <p class="text-gray-600 text-sm">World's Largest River Island</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item bg-white rounded-lg shadow-md overflow-hidden cursor-pointer" onclick="openModal('Sivasagar Monuments', 'Historic monuments including Rang Ghar and Talatal Ghar from the Ahom dynasty era.', 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Rang_Ghar%2C_Sivasagar.jpg/800px-Rang_Ghar%2C_Sivasagar.jpg')">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Rang_Ghar%2C_Sivasagar.jpg/800px-Rang_Ghar%2C_Sivasagar.jpg" alt="Sivasagar Monuments" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg text-gray-800">🏰 Sivasagar Monuments</h3>
+                        <p class="text-gray-600 text-sm">Ahom Dynasty Heritage</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item bg-white rounded-lg shadow-md overflow-hidden cursor-pointer" onclick="openModal('Kaziranga National Park', 'UNESCO World Heritage Site famous for one-horned rhinoceros and diverse wildlife.', 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Indian_Rhinoceros_Size.svg/800px-Indian_Rhinoceros_Size.svg.png')">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Indian_Rhinoceros_Size.svg/800px-Indian_Rhinoceros_Size.svg.png" alt="Kaziranga National Park" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg text-gray-800">🦏 Kaziranga National Park</h3>
+                        <p class="text-gray-600 text-sm">UNESCO World Heritage Site</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item bg-white rounded-lg shadow-md overflow-hidden cursor-pointer" onclick="openModal('Traditional Assamese Textiles', 'Exquisite handwoven silk and cotton textiles showcasing traditional Assamese craftsmanship.', 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Assamese_Mekhela_Chador.jpg/800px-Assamese_Mekhela_Chador.jpg')">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Assamese_Mekhela_Chador.jpg/800px-Assamese_Mekhela_Chador.jpg" alt="Traditional Assamese Textiles" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg text-gray-800">🧵 Traditional Textiles</h3>
+                        <p class="text-gray-600 text-sm">Handwoven Silk & Cotton</p>
+                    </div>
+                </div>
+
+                <div class="gallery-item bg-white rounded-lg shadow-md overflow-hidden cursor-pointer" onclick="openModal('Bihu Festival', 'Colorful celebrations of Assams most important festival showcasing traditional dance and music.', 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Bihu_dance.jpg/800px-Bihu_dance.jpg')">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Bihu_dance.jpg/800px-Bihu_dance.jpg" alt="Bihu Festival" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg text-gray-800">🎭 Bihu Festival</h3>
+                        <p class="text-gray-600 text-sm">Traditional Celebrations</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Voice Heritage Tab -->
+        <div id="voice" class="tab-content">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-emerald-800 mb-4">Voice Heritage Collection</h2>
+                <p class="text-gray-600 mb-6">Listen to traditional songs, stories, and oral histories of Assam</p>
+                <div class="bg-yellow-100 border-l-4 border-yellow-500 p-4 rounded">
+                    <p class="text-yellow-800">📢 <strong>Demo Mode:</strong> Audio playback is not supported in this environment, but the interface shows how voice recordings would be organized and accessed.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="audio-player rounded-lg p-6 text-white">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4">
+                            🎵
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-lg">Traditional Bihu Songs</h3>
+                            <p class="text-sm opacity-90">Folk music collection</p>
+                        </div>
+                    </div>
+                    <div class="bg-white bg-opacity-20 rounded-full h-2 mb-4">
+                        <div class="bg-white h-2 rounded-full w-1/3"></div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <button class="bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full p-2 transition-colors">
+                            ▶️
+                        </button>
+                        <span class="text-sm">2:45 / 8:20</span>
+                    </div>
+                </div>
+
+                <div class="audio-player rounded-lg p-6 text-white">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4">
+                            📖
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-lg">Ahom Dynasty Stories</h3>
+                            <p class="text-sm opacity-90">Historical narratives</p>
+                        </div>
+                    </div>
+                    <div class="bg-white bg-opacity-20 rounded-full h-2 mb-4">
+                        <div class="bg-white h-2 rounded-full w-1/2"></div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <button class="bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full p-2 transition-colors">
+                            ▶️
+                        </button>
+                        <span class="text-sm">5:12 / 10:30</span>
+                    </div>
+                </div>
+
+                <div class="audio-player rounded-lg p-6 text-white">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4">
+                            🗣️
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-lg">Elder's Memories</h3>
+                            <p class="text-sm opacity-90">Oral history project</p>
+                        </div>
+                    </div>
+                    <div class="bg-white bg-opacity-20 rounded-full h-2 mb-4">
+                        <div class="bg-white h-2 rounded-full w-3/4"></div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <button class="bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full p-2 transition-colors">
+                            ▶️
+                        </button>
+                        <span class="text-sm">12:15 / 16:45</span>
+                    </div>
+                </div>
+
+                <div class="audio-player rounded-lg p-6 text-white">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4">
+                            🎭
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-lg">Traditional Prayers</h3>
+                            <p class="text-sm opacity-90">Sacred chants</p>
+                        </div>
+                    </div>
+                    <div class="bg-white bg-opacity-20 rounded-full h-2 mb-4">
+                        <div class="bg-white h-2 rounded-full w-1/4"></div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <button class="bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full p-2 transition-colors">
+                            ▶️
+                        </button>
+                        <span class="text-sm">1:30 / 6:00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Video Stories Tab -->
+        <div id="video" class="tab-content">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-emerald-800 mb-4">Video Heritage Stories</h2>
+                <p class="text-gray-600 mb-6">Documentary films and cultural performances showcasing Assam's heritage</p>
+                <div class="bg-blue-100 border-l-4 border-blue-500 p-4 rounded">
+                    <p class="text-blue-800">🎬 <strong>Demo Mode:</strong> Videos are embedded from YouTube for demonstration.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer" onclick="openVideoModal('Majuli: The Vanishing Island', 'Documentary about the cultural heritage of Majuli Island and its challenges.', 'U8YbV1pZ9kM')">
+                    <div class="video-thumbnail h-48 flex items-center justify-center relative">
+                        <div class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
+                            <button class="w-16 h-16 bg-white bg-opacity-90 rounded-full flex items-center justify-center hover:bg-opacity-100 transition-colors">
+                                ▶️
+                            </button>
+                        </div>
+                        <!-- Optional: Add a thumbnail image here if available -->
+                        <img src="https://img.youtube.com/vi/U8YbV1pZ9kM/maxresdefault.jpg" alt="Majuli Thumbnail" class="w-full h-full object-cover absolute inset-0 opacity-0 hover:opacity-100 transition-opacity">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg text-gray-800 mb-2">Majuli: The Vanishing Island</h3>
+                        <p class="text-gray-600 text-sm mb-3">Documentary about the cultural heritage of Majuli Island and its challenges.</p>
+                        <div class="flex items-center text-sm text-gray-500">
+                            <span>⏱️ 25:30</span>
+                            <span class="mx-2">•</span>
+                            <span>👁️ 1.2K views</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer" onclick="openVideoModal('Bihu Dance Performance', 'Traditional Bihu dance performed by local artists during spring festival.', '6qXiR1tO7Y4')">
+                    <div class="video-thumbnail h-48 flex items-center justify-center relative">
+                        <div class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
+                            <button class="w-16 h-16 bg-white bg-opacity-90 rounded-full flex items-center justify-center hover:bg-opacity-100 transition-colors">
+                                ▶️
+                            </button>
+                        </div>
+                        <img src="https://img.youtube.com/vi/6qXiR1tO7Y4/maxresdefault.jpg" alt="Bihu Dance Thumbnail" class="w-full h-full object-cover absolute inset-0 opacity-0 hover:opacity-100 transition-opacity">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg text-gray-800 mb-2">Bihu Dance Performance</h3>
+                        <p class="text-gray-600 text-sm mb-3">Traditional Bihu dance performed by local artists during spring festival.</p>
+                        <div class="flex items-center text-sm text-gray-500">
+                            <span>⏱️ 8:45</span>
+                            <span class="mx-2">•</span>
+                            <span>👁️ 856 views</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer" onclick="openVideoModal('Kamakhya Temple Rituals', 'Sacred rituals and architectural beauty of the ancient Kamakhya Temple.', 'd1C_bZQPw1E')">
+                    <div class="video-thumbnail h-48 flex items-center justify-center relative">
+                        <div class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
+                            <button class="w-16 h-16 bg-white bg-opacity-90 rounded-full flex items-center justify-center hover:bg-opacity-100 transition-colors">
+                                ▶️
+                            </button>
+                        </div>
+                        <img src="https://img.youtube.com/vi/d1C_bZQPw1E/maxresdefault.jpg" alt="Kamakhya Temple Thumbnail" class="w-full h-full object-cover absolute inset-0 opacity-0 hover:opacity-100 transition-opacity">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold text-lg text-gray-800 mb-2">Kamakhya Temple Rituals</h3>
+                        <p class="text-gray-600 text-sm mb-3">Sacred rituals and architectural beauty of the ancient Kamakhya Temple.</p>
+                        <div class="flex items-center text-sm text-gray-500">
+                            <span>⏱️ 15:20</span>
+                            <span class="mx-2">•</span>
+                            <span>👁️ 2.3K views</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+                   
+        <!-- Comments Tab -->
+        <div id="comments" class="tab-content">
+            <div class="mb-8">
+                <h2 class="text-3xl font-bold text-emerald-800 mb-4">Visitor Comments & Reviews</h2>
+                <p class="text-gray-600 mb-6">Share your thoughts and read what others say about Assam's heritage</p>
+            </div>
+
+            <!-- Add Comment Form -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">Share Your Experience</h3>
+                <form onsubmit="addComment(event)" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <input type="text" id="visitorName" placeholder="Your Name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                        <input type="email" id="visitorEmail" placeholder="Your Email (optional)" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                    </div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <span class="text-gray-700">Rating:</span>
+                        <div class="flex space-x-1" id="starRating">
+                            <button type="button" onclick="setRating(1)" class="star text-2xl text-gray-300 hover:text-yellow-400">⭐</button>
+                            <button type="button" onclick="setRating(2)" class="star text-2xl text-gray-300 hover:text-yellow-400">⭐</button>
+                            <button type="button" onclick="setRating(3)" class="star text-2xl text-gray-300 hover:text-yellow-400">⭐</button>
+                            <button type="button" onclick="setRating(4)" class="star text-2xl text-gray-300 hover:text-yellow-400">⭐</button>
+                            <button type="button" onclick="setRating(5)" class="star text-2xl text-gray-300 hover:text-yellow-400">⭐</button>
+                        </div>
+                        <span id="ratingText" class="text-gray-600 ml-2">Click to rate</span>
+                    </div>
+                    <textarea id="commentText" placeholder="Share your thoughts about Assam's heritage..." required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 h-32 resize-none"></textarea>
+                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+                        Post Comment
+                    </button>
+                </form>
+            </div>
+
+            <!-- Comments List -->
+            <div id="commentsList" class="space-y-6">
+                <!-- Sample Comments -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center text-white font-semibold">
+                            R
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2 mb-2">
+                                <h4 class="font-semibold text-gray-800">Ravi Kumar</h4>
+                                <div class="flex text-yellow-400">
+                                    ⭐⭐⭐⭐⭐
+                                </div>
+                                <span class="text-gray-500 text-sm">2 days ago</span>
+                            </div>
+                            <p class="text-gray-700">Absolutely mesmerizing! The Kamakhya Temple is a spiritual experience like no other. The architecture and the energy of the place is incredible. A must-visit for anyone interested in Indian heritage.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
+                            P
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2 mb-2">
+                                <h4 class="font-semibold text-gray-800">Priya Sharma</h4>
+                                <div class="flex text-yellow-400">
+                                    ⭐⭐⭐⭐⭐
+                                </div>
+                                <span class="text-gray-500 text-sm">1 week ago</span>
+                            </div>
+                            <p class="text-gray-700">Majuli Island is a hidden gem! The traditional satras and the peaceful environment make it perfect for cultural exploration. The boat ride to reach there is an adventure in itself.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-start space-x-4">
+                        <div class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center text-white font-semibold">
+                            A
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2 mb-2">
+                                <h4 class="font-semibold text-gray-800">Ankit Bose</h4>
+                                <div class="flex text-yellow-400">
+                                    ⭐⭐⭐⭐
+                                </div>
+                                <span class="text-gray-500 text-sm">2 weeks ago</span>
+                            </div>
+                            <p class="text-gray-700">The Bihu festival celebration was amazing! The traditional dance performances and the vibrant atmosphere really showcase the rich culture of Assam. Great organization and hospitality.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal for Gallery Images -->
+    <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-75 modal hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg max-w-2xl w-full max-h-full overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <h3 id="modalTitle" class="text-2xl font-bold text-gray-800"></h3>
+                    <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700 text-2xl">×</button>
+                </div>
+                <div id="modalImage" class="mb-4 h-64 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg flex items-center justify-center">
+                    <svg class="w-20 h-20 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"/>
+                    </svg>
+                </div>
+                <p id="modalDescription" class="text-gray-700"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentRating = 0;
+
+        function showTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            
+            // Update tab buttons
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            tabButtons.forEach(btn => {
+                btn.classList.remove('border-emerald-500', 'text-emerald-700');
+                btn.classList.add('text-gray-600');
+            });
+            
+            // Highlight active tab
+            event.target.classList.remove('text-gray-600');
+            event.target.classList.add('border-emerald-500', 'text-emerald-700');
+        }
+
+        function openModal(title, description) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalDescription').textContent = description;
+            document.getElementById('imageModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').classList.add('hidden');
+        }
+
+        function setRating(rating) {
+            currentRating = rating;
+            const stars = document.querySelectorAll('.star');
+            const ratingTexts = ['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
+            
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.remove('text-gray-300');
+                    star.classList.add('text-yellow-400');
+                } else {
+                    star.classList.remove('text-yellow-400');
+                    star.classList.add('text-gray-300');
+                }
+            });
+            
+            document.getElementById('ratingText').textContent = ratingTexts[rating];
+        }
+
+        function addComment(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('visitorName').value;
+            const email = document.getElementById('visitorEmail').value;
+            const comment = document.getElementById('commentText').value;
+            
+            if (!name || !comment || currentRating === 0) {
+                alert('Please fill in your name, comment, and rating.');
+                return;
+            }
+            
+            // Create new comment element
+            const commentsList = document.getElementById('commentsList');
+            const newComment = document.createElement('div');
+            newComment.className = 'bg-white rounded-lg shadow-md p-6';
+            
+            const stars = '⭐'.repeat(currentRating);
+            const initial = name.charAt(0).toUpperCase();
+            const colors = ['bg-emerald-500', 'bg-blue-500', 'bg-purple-500', 'bg-pink-500', 'bg-indigo-500'];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            newComment.innerHTML = `
+                <div class="flex items-start space-x-4">
+                    <div class="w-12 h-12 ${randomColor} rounded-full flex items-center justify-center text-white font-semibold">
+                        ${initial}
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center space-x-2 mb-2">
+                            <h4 class="font-semibold text-gray-800">${name}</h4>
+                            <div class="flex text-yellow-400">
+                                ${stars}
+                            </div>
+                            <span class="text-gray-500 text-sm">Just now</span>
+                        </div>
+                        <p class="text-gray-700">${comment}</p>
+                    </div>
+                </div>
+            `;
+            
+            // Add to top of comments list
+            commentsList.insertBefore(newComment, commentsList.firstChild);
+            
+            // Reset form
+            document.getElementById('visitorName').value = '';
+            document.getElementById('visitorEmail').value = '';
+            document.getElementById('commentText').value = '';
+            setRating(0);
+            document.getElementById('ratingText').textContent = 'Click to rate';
+            
+            // Show success message
+            alert('Thank you for your comment! It has been added to the gallery.');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('imageModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'981f17704467a743',t:'MTc1ODM0NzkxMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
+
+                    

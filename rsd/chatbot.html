@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assam Heritage AI Chatbot</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #526ad6 0%, #753dac,rgb(203, 96, 96) 100%);
+            min-height: 100vh;
+        }
+        .chat-bubble {
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .typing-indicator {
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        .chat-container {
+            height: 70vh;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.3) transparent;
+        }
+        .chat-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .chat-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .chat-container::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        const heritageData = {
+            "kamakhya temple": {
+                name: "Kamakhya Temple",
+                location: "Nilachal Hill, Guwahati",
+                description: "One of the oldest Shakti Peethas in India, dedicated to Goddess Kamakhya. This ancient temple is a major pilgrimage site for Tantric worshippers.",
+                history: "Built in the 8th-17th century, destroyed and rebuilt multiple times. The current structure dates back to 1565 CE.",
+                timings: "5:30 AM - 1:00 PM, 2:30 PM - 5:30 PM (Winter), 5:00 AM - 1:00 PM, 2:30 PM - 6:30 PM (Summer)",
+                entry_fee: "Free",
+                best_time: "October to April",
+                highlights: ["Tantric rituals", "Ambubachi Mela", "Nilachal Hill views", "Ancient architecture"],
+                nearby: ["Umananda Temple", "Assam State Museum", "Brahmaputra River Cruise"]
+            },
+            "umananda temple": {
+                name: "Umananda Temple",
+                location: "Peacock Island, Brahmaputra River",
+                description: "A Shiva temple located on Peacock Island, the smallest inhabited river island in the world.",
+                history: "Built by Ahom King Gadadhar Singha in 1694 CE. The island is also known as Bhasmacala in ancient texts.",
+                timings: "6:00 AM - 6:00 PM",
+                entry_fee: "₹5 + Ferry charges ₹10",
+                best_time: "October to March",
+                highlights: ["Ferry ride", "Smallest inhabited island", "Sunset views", "River dolphins"],
+                nearby: ["Kamakhya Temple", "Guwahati Planetarium", "Assam State Zoo"]
+            },
+            "rang ghar": {
+                name: "Rang Ghar",
+                location: "Sivasagar, Assam",
+                description: "Asia's oldest amphitheater, built by Ahom kings for royal entertainment and cultural events.",
+                history: "Built by Ahom King Pramatta Singha in 1744-1750 CE. Used for traditional games like buffalo fights and cultural performances.",
+                timings: "9:00 AM - 5:00 PM",
+                entry_fee: "₹25 for Indians, ₹300 for foreigners",
+                best_time: "November to February",
+                highlights: ["Ahom architecture", "Royal pavilion", "Historical significance", "Cultural heritage"],
+                nearby: ["Talatal Ghar", "Shiva Dol", "Kareng Ghar"]
+            },
+            "talatal ghar": {
+                name: "Talatal Ghar",
+                location: "Sivasagar, Assam",
+                description: "A seven-storied palace with underground tunnels, serving as the military base of Ahom kings.",
+                history: "Built by Ahom King Rudra Singha in 1751 CE. Features a unique blend of Ahom and Mughal architecture.",
+                timings: "9:00 AM - 5:00 PM",
+                entry_fee: "₹25 for Indians, ₹300 for foreigners",
+                best_time: "November to February",
+                highlights: ["Secret tunnels", "Military architecture", "Ahom engineering", "Underground chambers"],
+                nearby: ["Rang Ghar", "Shiva Dol", "Joysagar Tank"]
+            },
+            "shiva dol": {
+                name: "Shiva Dol",
+                location: "Sivasagar, Assam",
+                description: "The tallest Shiva temple in India at 104 feet, built by Ahom Queen Ambika Kunwari.",
+                history: "Built in 1734 CE by Queen Ambika Kunwari, wife of Ahom King Siva Singha. Represents the pinnacle of Ahom temple architecture.",
+                timings: "6:00 AM - 8:00 PM",
+                entry_fee: "Free",
+                best_time: "October to March",
+                highlights: ["104 feet height", "Ahom craftsmanship", "Sacred pond", "Annual festivals"],
+                nearby: ["Rang Ghar", "Talatal Ghar", "Vishnu Dol", "Devi Dol"]
+            },
+            "majuli": {
+                name: "Majuli Island",
+                location: "Brahmaputra River, Assam",
+                description: "World's largest river island and UNESCO World Heritage Site candidate, famous for Vaishnavite monasteries (Satras).",
+                history: "Formed in the 16th century due to course changes of Brahmaputra. Cultural hub established by saint Srimanta Sankardeva.",
+                timings: "24/7 (Ferry services: 7:00 AM - 4:00 PM)",
+                entry_fee: "Free (Ferry charges ₹15-25)",
+                best_time: "November to April",
+                highlights: ["Sattriya dance", "Vaishnavite culture", "Traditional crafts", "Tribal villages"],
+                nearby: ["Kamalabari Satra", "Auniati Satra", "Dakhinpat Satra", "Mishing villages"]
+            },
+            "kamalabari satra": {
+                name: "Kamalabari Satra",
+                location: "Majuli Island, Assam",
+                description: "One of the most important Vaishnavite monasteries in Majuli, famous for Sattriya dance and cultural preservation.",
+                history: "Established in 1673 CE by Bedananda Goswami. Center for Neo-Vaishnavite culture and performing arts.",
+                timings: "6:00 AM - 8:00 PM",
+                entry_fee: "Free (Donations welcome)",
+                best_time: "November to March",
+                highlights: ["Sattriya dance performances", "Manuscript library", "Traditional music", "Spiritual teachings"],
+                nearby: ["Auniati Satra", "Garamur Satra", "Natun Kamalabari"]
+            }
+        };
+
+        const quickReplies = [
+            "Tell me about Kamakhya Temple",
+            "What are the timings for Rang Ghar?",
+            "How to reach Majuli Island?",
+            "Best time to visit Assam heritage sites",
+            "Entry fees for monuments",
+            "Plan a 3-day heritage tour"
+        ];
+
+        function AssamHeritageChatbot() {
+            const [messages, setMessages] = useState([
+                {
+                    id: 1,
+                    text: "🙏 Namaste! I'm your Assam Heritage Guide. I can help you discover the rich cultural heritage of Assam including temples, monuments, and historical sites. What would you like to know?",
+                    sender: "bot",
+                    timestamp: new Date()
+                }
+            ]);
+            const [inputText, setInputText] = useState("");
+            const [isTyping, setIsTyping] = useState(false);
+            const chatContainerRef = useRef(null);
+
+            useEffect(() => {
+                if (chatContainerRef.current) {
+                    chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+                }
+            }, [messages]);
+
+            const findBestMatch = (query) => {
+                const lowerQuery = query.toLowerCase();
+                
+                // Direct site matches
+                for (const [key, site] of Object.entries(heritageData)) {
+                    if (lowerQuery.includes(key) || lowerQuery.includes(site.name.toLowerCase())) {
+                        return site;
+                    }
+                }
+
+                // Keyword matches
+                if (lowerQuery.includes("temple") || lowerQuery.includes("kamakhya")) {
+                    return heritageData["kamakhya temple"];
+                }
+                if (lowerQuery.includes("amphitheater") || lowerQuery.includes("rang ghar")) {
+                    return heritageData["rang ghar"];
+                }
+                if (lowerQuery.includes("palace") || lowerQuery.includes("talatal")) {
+                    return heritageData["talatal ghar"];
+                }
+                if (lowerQuery.includes("majuli") || lowerQuery.includes("island")) {
+                    return heritageData["majuli"];
+                }
+                if (lowerQuery.includes("satra") || lowerQuery.includes("monastery")) {
+                    return heritageData["kamalabari satra"];
+                }
+
+                return null;
+            };
+
+            const generateResponse = (query) => {
+                const lowerQuery = query.toLowerCase();
+                
+                // Greeting responses
+                if (lowerQuery.includes("hello") || lowerQuery.includes("hi") || lowerQuery.includes("namaste")) {
+                    return "🙏 Namaste! Welcome to Assam Heritage Guide. I'm here to help you explore the magnificent heritage sites of Assam. What would you like to know about?";
+                }
+
+                // General queries
+                if (lowerQuery.includes("timing") || lowerQuery.includes("time") || lowerQuery.includes("open")) {
+                    const site = findBestMatch(query);
+                    if (site) {
+                        return `⏰ **${site.name} Timings:**\n${site.timings}\n\n💡 Best time to visit: ${site.best_time}`;
+                    }
+                    return "⏰ **General Heritage Site Timings:**\n• Most temples: 6:00 AM - 8:00 PM\n• Museums: 10:00 AM - 5:00 PM\n• Monuments: 9:00 AM - 5:00 PM\n\nWhich specific site would you like timing details for?";
+                }
+
+                if (lowerQuery.includes("entry fee") || lowerQuery.includes("ticket") || lowerQuery.includes("cost")) {
+                    const site = findBestMatch(query);
+                    if (site) {
+                        return `💰 **${site.name} Entry Fee:**\n${site.entry_fee}\n\n📍 Location: ${site.location}`;
+                    }
+                    return "💰 **General Entry Fees:**\n• Temples: Usually Free\n• ASI Monuments: ₹25 (Indians), ₹300 (Foreigners)\n• Museums: ₹10-50\n• Ferry to islands: ₹10-25\n\nWhich specific site's fee would you like to know?";
+                }
+
+                if (lowerQuery.includes("how to reach") || lowerQuery.includes("transport") || lowerQuery.includes("travel")) {
+                    if (lowerQuery.includes("majuli")) {
+                        return "🚢 **How to reach Majuli:**\n• Fly to Jorhat Airport (20 km from Neamati Ghat)\n• Take ferry from Neamati Ghat to Kamalabari Ghat\n• Ferry timings: 7:00 AM - 4:00 PM\n• Journey time: 1-2 hours\n• Ferry cost: ₹15-25 per person\n\n🚗 Alternative: Drive to Neamati Ghat (330 km from Guwahati)";
+                    }
+                    return "🚗 **General Transport Options:**\n• **Guwahati sites:** Local taxi, bus, auto-rickshaw\n• **Sivasagar sites:** Hire taxi from Jorhat (55 km)\n• **Majuli:** Ferry from Neamati Ghat\n• **Airport:** Guwahati (LGBI) is the main hub\n\nWhich specific location do you want directions for?";
+                }
+
+                if (lowerQuery.includes("best time") || lowerQuery.includes("weather") || lowerQuery.includes("season")) {
+                    return "🌤️ **Best Time to Visit Assam Heritage Sites:**\n\n**October to March** - Ideal weather\n• Temperature: 10°C - 25°C\n• Clear skies, perfect for sightseeing\n• Festival season (Durga Puja, Bihu)\n\n**April to June** - Hot but manageable\n• Early morning visits recommended\n\n**July to September** - Monsoon\n• Heavy rainfall, some sites may be inaccessible\n• Majuli ferry services affected";
+                }
+
+                if (lowerQuery.includes("plan") || lowerQuery.includes("itinerary") || lowerQuery.includes("tour")) {
+                    return "📅 **3-Day Assam Heritage Tour Plan:**\n\n**Day 1 - Guwahati**\n• Morning: Kamakhya Temple (6 AM)\n• Afternoon: Umananda Temple\n• Evening: Assam State Museum\n\n**Day 2 - Sivasagar**\n• Morning: Rang Ghar\n• Afternoon: Talatal Ghar\n• Evening: Shiva Dol\n\n**Day 3 - Majuli**\n• Morning: Ferry to Majuli\n• Visit: Kamalabari Satra, Auniati Satra\n• Experience: Traditional village life\n\n💡 Need detailed info about any specific site?";
+                }
+
+                if (lowerQuery.includes("food") || lowerQuery.includes("cuisine")) {
+                    return "🍽️ **Traditional Assamese Cuisine to Try:**\n\n**Must-try dishes:**\n• Assam Laksa (fish curry with rice noodles)\n• Masor Tenga (sour fish curry)\n• Aloo Pitika (mashed potatoes)\n• Pitha (rice cakes)\n• Assam Tea\n\n**Where to eat:**\n• Local restaurants near heritage sites\n• Traditional Assamese thalis\n• Tea gardens for authentic Assam tea experience";
+                }
+
+                // Site-specific queries
+                const site = findBestMatch(query);
+                if (site) {
+                    return `🏛️ **${site.name}**\n\n📍 **Location:** ${site.location}\n\n📖 **About:** ${site.description}\n\n🏛️ **History:** ${site.history}\n\n⏰ **Timings:** ${site.timings}\n\n💰 **Entry Fee:** ${site.entry_fee}\n\n🌟 **Highlights:**\n${site.highlights.map(h => `• ${h}`).join('\n')}\n\n📍 **Nearby Attractions:**\n${site.nearby.map(n => `• ${n}`).join('\n')}\n\n💡 Need more specific information about this site?`;
+                }
+
+                // Default response
+                return "🤔 I'd love to help you explore Assam's heritage! I can provide information about:\n\n🏛️ **Heritage Sites:**\n• Kamakhya Temple\n• Rang Ghar\n• Talatal Ghar\n• Shiva Dol\n• Majuli Island\n• Kamalabari Satra\n\n📋 **Information I can provide:**\n• Timings & Entry fees\n• Historical background\n• How to reach\n• Best time to visit\n• Tour planning\n\nJust ask me about any specific site or topic!";
+            };
+
+            const handleSendMessage = async (text = inputText) => {
+                if (!text.trim()) return;
+
+                const userMessage = {
+                    id: Date.now(),
+                    text: text,
+                    sender: "user",
+                    timestamp: new Date()
+                };
+
+                setMessages(prev => [...prev, userMessage]);
+                setInputText("");
+                setIsTyping(true);
+
+                // Simulate AI thinking time
+                setTimeout(() => {
+                    const response = generateResponse(text);
+                    const botMessage = {
+                        id: Date.now() + 1,
+                        text: response,
+                        sender: "bot",
+                        timestamp: new Date()
+                    };
+
+                    setMessages(prev => [...prev, botMessage]);
+                    setIsTyping(false);
+                }, 1000 + Math.random() * 1000);
+            };
+
+            const handleKeyPress = (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSendMessage();
+                }
+            };
+
+            const formatMessage = (text) => {
+                return text.split('\n').map((line, index) => (
+                    <div key={index}>
+                        {line.includes('**') ? (
+                            <span className="font-bold">
+                                {line.replace(/\*\*(.*?)\*\*/g, '$1')}
+                            </span>
+                        ) : (
+                            line
+                        )}
+                    </div>
+                ));
+            };
+
+            return (
+                <div className="min-h-screen p-4">
+                    <div className="max-w-4xl mx-auto">
+                        {/* Header */}
+                        <div className="bg-white/20 backdrop-blur-lg rounded-t-2xl p-6 border-b border-white/20">
+                            <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 bg-gradient-to-r from-orange-400 to-red-500 rounded-full flex items-center justify-center text-2xl">
+                                    🏛️
+                                </div>
+                                <div>
+                                    <h1 className="text-2xl font-bold text-white">Hello! I am Sampriti </h1>
+                                    <p className="text-white/80">Your personal guide to Assam's cultural treasures</p>
+                                </div>
+                                <div className="ml-auto">
+                                    <div className="flex items-center gap-2 text-green-400">
+                                        <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                                        <span className="text-sm">Online</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Chat Container */}
+                        <div 
+                            ref={chatContainerRef}
+                            className="chat-container bg-white/10 backdrop-blur-lg p-6 space-y-4"
+                        >
+                            {messages.map((message) => (
+                                <div
+                                    key={message.id}
+                                    className={`chat-bubble flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                                >
+                                    <div
+                                        className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl ${
+                                            message.sender === 'user'
+                                                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white'
+                                                : 'bg-white/20 text-white border border-white/20'
+                                        }`}
+                                    >
+                                        <div className="text-sm leading-relaxed">
+                                            {formatMessage(message.text)}
+                                        </div>
+                                        <div className={`text-xs mt-2 ${message.sender === 'user' ? 'text-white/70' : 'text-white/50'}`}>
+                                            {message.timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+
+                            {isTyping && (
+                                <div className="flex justify-start">
+                                    <div className="bg-white/20 text-white px-4 py-3 rounded-2xl border border-white/20">
+                                        <div className="typing-indicator flex gap-1">
+                                            <div className="w-2 h-2 bg-white rounded-full"></div>
+                                            <div className="w-2 h-2 bg-white rounded-full"></div>
+                                            <div className="w-2 h-2 bg-white rounded-full"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Quick Replies */}
+                        <div className="bg-white/10 backdrop-blur-lg p-4 border-t border-white/20">
+                            <div className="flex flex-wrap gap-2 mb-4">
+                                {quickReplies.map((reply, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => handleSendMessage(reply)}
+                                        className="bg-white/20 hover:bg-white/30 text-white px-3 py-2 rounded-full text-sm transition-all border border-white/20"
+                                    >
+                                        {reply}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Input Area */}
+                        <div className="bg-white/20 backdrop-blur-lg rounded-b-2xl p-4">
+                            <div className="flex gap-3">
+                                <textarea
+                                    value={inputText}
+                                    onChange={(e) => setInputText(e.target.value)}
+                                    onKeyPress={handleKeyPress}
+                                    placeholder="Ask me about Assam heritage sites..."
+                                    className="flex-1 bg-white/20 text-white placeholder-white/70 border border-white/30 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-white/50 resize-none"
+                                    rows="1"
+                                />
+                                <button
+                                    onClick={() => handleSendMessage()}
+                                    disabled={!inputText.trim() || isTyping}
+                                    className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-3 rounded-xl font-semibold transition-all"
+                                >
+                                    Send
+                                </button>
+                            </div>
+                            <p className="text-white/60 text-xs mt-2 text-center">
+                                Press Enter to send • This AI guide has information about major Assam heritage sites
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<AssamHeritageChatbot />, document.getElementById('root'));
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'980ee366969da73c',t:'MTc1ODE3ODAwOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
